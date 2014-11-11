@@ -58,6 +58,19 @@ class Registry
   }
 
   /**
+   * Produces a diagnostic output from this object
+   *
+   */
+  public static function dump()
+  {
+    $reg = self::init();
+    $msg = 'Diagnostic Dump from '.get_class($reg)."<hr />\n";
+    $msg .= strval($reg->item);
+
+    print $msg;
+  }
+
+  /**
    * A diagnostic dump of the values stored here.
    *
    * @return string
@@ -82,7 +95,7 @@ class Registry
    * Pass through to the data item object
    *
    * @param string
-   * 
+   *
    * @return mixed
    */
   public function __get($field)
@@ -101,17 +114,29 @@ class Registry
   }
 
   /**
-   * Provide an actual set value method
+   * Provide a static method for setting a value
    *
    * @param string
    * @param mixed
-   *
-   * @return this
    */
-  public function setValue($field, $value)
+  public static function setValue($field, $value)
   {
-    $this->item->setValue($field, $value);
+    $reg = self::init();
 
-    return $this;
+    $reg->item->setValue($field, $value);
+  }
+
+  /**
+   * Provide a static method for getting a value
+   *
+   * @param string
+   *
+   * @return mixed
+   */
+  public static function getValue($field)
+  {
+    $reg = self::init();
+
+    return $reg->item->$field;
   }
 }
