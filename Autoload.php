@@ -210,36 +210,43 @@ class Autoload
   /**
    * Determines the file name and path of a class name
    *
-   * @param string
+   * @param string $className
+   *
    * @return string
+   *
    * @throws \Metrol\Autoload\Exception
    */
   public static function classFileName($className)
   {
     $classExplode = self::explodeClassName($className);
+    $rtnFileName  = '';
 
     if ( count($classExplode) == 0 )
     {
       throw new Autoload\Exception('Unable to parse class: '.$className);
     }
 
-    $rtnFileName = self::checkLibraries($className);
+    $libFileName = self::checkLibraries($className);
 
-    if ( strlen($rtnFileName) > 0 )
+    if ( strlen($libFileName) > 0 )
     {
-      return $rtnFileName;
+      $rtnFileName = $libFileName;
     }
 
-    $rtnFileName = self::checkPaths($className);
+    $pathFileName = self::checkPaths($className);
 
-    if ( strlen($rtnFileName) > 0 )
+    if ( strlen($pathFileName) > 0 )
     {
-      return $rtnFileName;
+      $rtnFileName = $pathFileName;
     }
 
-    self::$backTrace = debug_backtrace();
+    if ( strlen($rtnFileName) == 0 )
+    {
+      self::$backTrace = debug_backtrace();
+      throw new Autoload\Exception('File Not Found for class: '.$className);
+    }
 
-    throw new Autoload\Exception('File Not Found for class: '.$className);
+    return $rtnFileName;
   }
 
   /**
